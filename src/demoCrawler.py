@@ -21,7 +21,7 @@ for itype, dtype in enumerate(['d','h','n']):
     # ( Attrs, Data )
     buildingTuples = crawUtil.parseBuildings(powerSoup)
     # [(ID, name), ... ]
-    print('\033[0;31mFetch data of '+BUILDING_ID+' on '+DATE_STRING1+' every '+TYPE_MESSAGE[itype]+'.\033[0m')
+    print('\n\033[1;33mFetch data of '+BUILDING_ID+' on '+DATE_STRING1+' every '+TYPE_MESSAGE[itype]+'.\033[0m')
     crawIO.printPowerData(powerDataTuple)
 
 crawIO.dumpBuildingsCSV(buildingTuples, BUILDING_CSV)

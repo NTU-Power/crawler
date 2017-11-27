@@ -4,6 +4,6 @@ if [ "$EUID" -ne 0 ]
 fi
 
 apt install python3
-apt-get install mongodb
+apt-get install mongodb python3-pip
 pip3 install requests bs4 lxml tabulate
 pip3 install -Iv pymongo==2.9
