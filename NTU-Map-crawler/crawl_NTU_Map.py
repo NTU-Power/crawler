@@ -6,8 +6,6 @@ from pymongo import MongoClient
 
 # constants
 DATABASE_NAME   = 'Power-database'
-COLLECTION_NAME = ''
-BUILDING_CSV    = 'assets/buildings.csv'
 
 URL_LEFT_MENU = 'https://map.ntu.edu.tw/ntu.htm?action=getDepatments'
 URL_GET_UID   = 'https://map.ntu.edu.tw/ntu.htm?action=getUid'
@@ -115,12 +113,16 @@ def insertBuilding(
     for idx, uid in enumerate(buildingUIDs):
         try:
             oneBuilding = {
-                'BuildingNames': buildingInfo[idx]['name'],
-                'BuildingID': uid,
-                'BuildingArea': buildingInfo[idx]['area'],
+                'BuildingNames':    buildingInfo[idx]['name'],
+                'BuildingID':       uid,
+                'BuildingArea':     buildingInfo[idx]['area'],
                 'BuildingLocation': {
-                    'type': "MultiPolygon",
-                    'coordinates': buildingCoord[idx]
+                    'type':         "MultiPolygon",
+                    'coordinates':  buildingCoord[idx]
+                },
+                'BuildingFloors': {
+                    'floor':        buildingInfo[idx]['floor'],
+                    'basement':     buildingInfo[idx]['basement']
                 }
             }
         except KeyError:

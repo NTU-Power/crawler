@@ -1,0 +1,6 @@
+CollegeName
+CollegeBuildingList.BuildingID
+CollegeBuildingList.BuildingArea
+CollegeBuildingList.BuildingFloors.floor
+CollegeBuildingList.BuildingFloors.basement
+CollegeBuildingList.BuildingNames
