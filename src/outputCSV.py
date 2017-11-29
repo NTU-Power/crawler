@@ -73,4 +73,4 @@ with open(OUTPUT_CSV, 'w') as of:
         of.write(oneLine+'\n')
 
 print('\nAccording to the field file \033[0;36m'+FIELD_FILE+'\033[0m.')
-print('Database data is writen in \033[0;36m'+OUTPUT_CSV+'\033[0m.')
+print('Database data is writen in \033[0;36m'+OUTPUT_CSV+'\033[0m.\n')
