@@ -3,7 +3,7 @@ import mod.crawIO   as crawIO
 
 # Constants
 POWER_SITE_URL  = 'http://140.112.166.97/power/fn2/dataq.aspx'
-BUILDING_CSV    = 'assets/buildings.csv'
+BUILDING_CSV    = 'assets/meter.csv'
 BUILDING_ID     = '00A_P1_01'
 DATE_STRING1    = '2017/1/1'
 DATE_STRING2    = '2017/1/2'

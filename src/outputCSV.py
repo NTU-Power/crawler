@@ -4,7 +4,7 @@ from pymongo import MongoClient
 # constants
 DATABASE_NAME   = 'Power-database'
 FIELD_FILE      = 'assets/fieldFile.txt'
-OUTPUT_CSV      = 'assets/db_output.csv'
+OUTPUT_CSV      = 'assets/building.csv'
 
 with open(FIELD_FILE) as ff:
     raw_list = ff.readlines()

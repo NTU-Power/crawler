@@ -1,4 +1,4 @@
-# crawler
+# Crawler
 Web crawler for parsing data from http://140.112.166.97/power/fn2/dataq.aspx
 
 ## Environment
