@@ -5,11 +5,18 @@ def printPowerData(powerDataTuple):
     print(tabulate(powerData))
     print('')
 
-def printBuildings(buildingTuples):
-    print(tabulate(buildingTuples))
+def printMeters(meterTuples):
+    print(tabulate(meterTuples))
 
-def dumpBuildingsCSV(buildingTuples, csvFileName):
+def dumpMetersCSV(meterTuples, csvFileName):
     with open(csvFileName, 'w') as csvFile:
-        csvFile.write('BuildingID,BuildingName\n')
-        for oneTuple in buildingTuples:
+        csvFile.write('MeterID,MeterName\n')
+        for oneTuple in meterTuples:
             csvFile.write(oneTuple[0]+','+oneTuple[1]+'\n')
+
+def loadMetersCSV(csvFileName):
+    with open(csvFileName) as csvFile:
+        csvLines = csvFile.readlines()
+        meterIDs = [a.split(',')[0] for a in csvLines[1:]]
+        meterNames = [a.split(',')[1][0:-1] for a in csvLines[1:]]
+    return meterIDs, meterNames

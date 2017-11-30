@@ -3,11 +3,12 @@ import time
 import datetime
 import json
 from bs4 import BeautifulSoup
+from datetime import datetime, timedelta
 
-def fetchHTML(url, build, dt1, dt2, dtype='n'):
+def fetchHTML(url, meter, dt1, dt2, dtype='n'):
     payload = {
         'dtype': dtype,
-        'build': build,
+        'meter': meter,
         'dt1'  : dt1,
         'dt2'  : dt2
     }
@@ -44,15 +45,40 @@ def parsePowerData(powerSoup):
     
     return (powerAttrs, powerData)
 
-def parseBuildings(powerSoup):
-    buildSelects    = powerSoup.findAll('select')
-    buildSelect     = buildSelects[1]
-    buildOptions    = buildSelect.findAll('option')
+def parseMeters(powerSoup):
+    meterSelects    = powerSoup.findAll('select')
+    meterSelect     = meterSelects[1]
+    meterOptions    = meterSelect.findAll('option')
 
-    buildTuples = []
-    for buildOption in buildOptions:
-        buildTuples.append(
-            (buildOption['value'], buildOption.text[len(buildOption['value']):])
+    meterTuples = []
+    for meterOption in meterOptions:
+        meterTuples.append(
+            (meterOption['value'], meterOption.text[len(meterOption['value']):])
         )
 
-    return buildTuples
+    return meterTuples
+
+def _timeType2Format(timeType):
+    assert timeType in ['m', 'd', 'h', 'n'], \
+        'timeType should be (m)onth, (d)ay, (h)our, (n)-min, input is ' + str(timeType)
+    _format = '%Y/%m'
+    if timeType == 'd':
+        _format += '/%d'
+    elif timeType == 'h':
+        _format += '/%d %H'
+    elif timeType == 'n':
+        _format += '/%d %H:%M'
+    return _format
+
+def dateStr2Time(inputStr, timeType):
+    _format = _timeType2Format(timeType)
+    return datetime.strptime(inputStr, _format)
+
+def dateTime2Str(inputTime, timeType):
+    _format = _timeType2Format(timeType)
+    return datetime.strftime(inputTime, _format)
+
+def dateRange(start_date, end_date):
+    for n in range(int ((end_date - start_date).days)):
+        yield start_date + timedelta(n)
+
