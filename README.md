@@ -12,6 +12,7 @@ sudo ./install_packages.sh
 You can try the following command:
 ```bash
 # Basic parser and database initialization.
+chmod +x ./demo.sh
 ./demo.sh
 ```
 
