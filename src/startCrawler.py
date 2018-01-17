@@ -18,7 +18,7 @@ meterIDs, meterNames = crawIO.loadMetersCSV(METER_CSV)
 
 client      = MongoClient()
 PowerDB     = client[DATABASE_NAME]
-PowerList   = PowerDB.PowerList
+PowerList   = PowerDB.PowerList      # Collection of Power Meter
 
 def createEmptyData(meter_id, meter_name):
     PowerList.update({
