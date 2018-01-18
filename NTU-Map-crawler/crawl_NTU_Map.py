@@ -1,11 +1,10 @@
 import requests
 import json
 import pymongo
+import mod.dbUtil as dbUtil
 from bs4 import BeautifulSoup
-from pymongo import MongoClient
 
 # constants
-DATABASE_NAME   = 'Power-database'
 
 URL_LEFT_MENU = 'https://map.ntu.edu.tw/ntu.htm?action=getDepatments'
 URL_GET_UID   = 'https://map.ntu.edu.tw/ntu.htm?action=getUid'
@@ -140,13 +139,9 @@ def insertBuilding(
             upsert=True
         )
 
+Colleges    = dbUtil.CollegeList
 
-client      = MongoClient()
-PowerDB     = client[DATABASE_NAME]
-Colleges    = PowerDB.CollegeList
-
-
-print('\n\nStart to load data into mongoDB: \033[0;36m'+DATABASE_NAME+'\033[0m.')
+print('\n\nStart to load data into mongoDB: \033[0;36mPower-database\033[0m.')
 menuList = getLeftMenu()
 for oneMenu in menuList:
     theTypeID = oneMenu['type']

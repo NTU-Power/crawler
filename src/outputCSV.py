@@ -1,8 +1,6 @@
-import pymongo
-from pymongo import MongoClient
+import mod.dbUtil as dbUtil
 
 # constants
-DATABASE_NAME   = 'Power-database'
 FIELD_FILE      = 'assets/fieldFile.txt'
 OUTPUT_CSV      = 'assets/building.csv'
 
@@ -61,11 +59,7 @@ def fields2data(fieldList):
 
     return resultLines
 
-
-
-client      = MongoClient()
-PowerDB     = client[DATABASE_NAME]
-Colleges    = PowerDB.CollegeList
+Colleges    = dbUtil.CollegeList
 
 csvData = fields2data(fieldList)
 with open(OUTPUT_CSV, 'w') as of:

@@ -2,8 +2,11 @@ import requests
 import time
 import datetime
 import json
+import pytz
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
+
+TAIPEI_TZ       = pytz.timezone('Asia/Taipei')
 
 def fetchHTML(url, meter, dt1, dt2, dtype='n'):
     payload = {
@@ -72,7 +75,8 @@ def _timeType2Format(timeType):
 
 def dateStr2Time(inputStr, timeType):
     _format = _timeType2Format(timeType)
-    return datetime.strptime(inputStr, _format)
+    _datetime = datetime.strptime(inputStr, _format)
+    return TAIPEI_TZ.localize(_datetime)
 
 def dateTime2Str(inputTime, timeType):
     _format = _timeType2Format(timeType)

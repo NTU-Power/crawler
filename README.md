@@ -16,3 +16,8 @@ chmod +x ./demo.sh
 ./demo.sh
 ```
 
+## Crawl data in background
+You can try the following command:
+```bash
+nohup python3 -u -m src.startCrawler > [LOG_FILENAME] &
+```
