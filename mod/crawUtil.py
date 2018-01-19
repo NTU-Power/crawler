@@ -42,7 +42,11 @@ def parsePowerData(powerSoup):
             elif (val == '---'):
                 val = -1
             else:
-                val = float(val)
+                try:
+                    val = round(float(val), 2)
+                except ValueError:
+                    print('ValueError: val = ' + str(val))
+                    val = -1
             powerDataItem.append(val)
         powerData.append(powerDataItem)
     
@@ -85,4 +89,7 @@ def dateTime2Str(inputTime, timeType):
 def dateRange(start_date, end_date):
     for n in range(int ((end_date - start_date).days)):
         yield start_date + timedelta(n)
+
+def vanillaUTC2TPE(vanillaTime):
+    return pytz.utc.localize(vanillaTime).astimezone(TAIPEI_TZ)
 

@@ -99,6 +99,6 @@ ENV/
 
 # mypy
 .mypy_cache/
-.swp
-.swo
+*.swp
+*.swo
 *.out

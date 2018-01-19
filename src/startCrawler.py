@@ -17,14 +17,16 @@ meterIDs, meterNames = crawIO.loadMetersCSV(METER_CSV)
 
 PowerList   = dbUtil.PowerList      # Collection of Power Meter
 
-def createEmptyData(meter_id, meter_name):
+def createEmptyData(meter_id, meter_name, start_date):
     PowerList.update(
         {
+            "PowerID":          meter_id,
         },
         {
-            "PowerID":meter_id,
-            "PowerName":meter_name,
-            "PowerMonthList":[]
+            "PowerID":          meter_id,
+            "PowerName":        meter_name,
+            "PowerMonthList":   [],
+            "PowerLastDate":    start_date
         }, 
         upsert = True
     )
@@ -33,7 +35,6 @@ def insertNewMonth(meter_id, meter_name, the_date):
     PowerList.update(
         {
             "PowerID":meter_id,
-            "PowerName":meter_name,
         },
         {
             "$addToSet":
@@ -66,7 +67,7 @@ def summaryMonth(meter_id, meter_name, the_date):
         powerMonthWattList.append(powerDateWatt)
         powerMonthUsage += powerDateUsage
 
-    powerMonthWatt = sum(powerMonthWattList)/len(powerMonthWattList)
+    powerMonthWatt = round(sum(powerMonthWattList)/len(powerMonthWattList), 2)
 
     PowerList.update(
         {
@@ -100,28 +101,28 @@ def insertPowerData(meter_id, meter_name, meter_data, the_date, timeType):
             {
                 "PowerID":meter_id,
                 "PowerName":meter_name,
-                "PowerMonthList.PowerMonth":_month
+                "PowerMonthList": { "$elemMatch": { "PowerMonth": _month} }
             },
             {
-                "$push":
+                "$addToSet":
                 {
                     "PowerMonthList.$.PowerDateList":
                     {
-                        "PowerDate":the_date,
+                        "PowerDate":(the_date-_month).days+1,# the_date,
                         "PowerDateData":
                         {
                             "PowerDateWatt" :   meter_data[1],
                             "PowerDateUsage":   meter_data[3],
                             "PowerDateMeter":   meter_data[2],
-                            "PowerDatePFactor": meter_data[4],
-                            "PowerDateAPower" : meter_data[11],
-                            "PowerDateRPower":  meter_data[12],
-                            "PowerDateI_r":     meter_data[5],
-                            "PowerDateI_s":     meter_data[6],
-                            "PowerDateI_t":     meter_data[7],
-                            "PowerDateV_rs":    meter_data[8],
-                            "PowerDateV_st":    meter_data[9],
-                            "PowerDateV_tr":    meter_data[10]
+                            # "PowerDatePFactor": meter_data[4],
+                            # "PowerDateAPower" : meter_data[11],
+                            # "PowerDateRPower":  meter_data[12],
+                            # "PowerDateI_r":     meter_data[5],
+                            # "PowerDateI_s":     meter_data[6],
+                            # "PowerDateI_t":     meter_data[7],
+                            # "PowerDateV_rs":    meter_data[8],
+                            # "PowerDateV_st":    meter_data[9],
+                            # "PowerDateV_tr":    meter_data[10]
                         }
                     }
                 }    
@@ -132,29 +133,29 @@ def insertPowerData(meter_id, meter_name, meter_data, the_date, timeType):
             {
                 "PowerID":meter_id,
                 "PowerName":meter_name,
-                "PowerMonthList.PowerMonth":_month,
-                "PowerMonthList.PowerDateList.PowerDate":_date
+                "PowerMonthList": { "$elemMatch": { "PowerMonth": _month} },
+                "PowerMonthList.PowerDateList": { "$elemMatch": { "PowerDate": _date} }
             },
             {
-                "$push":
+                "$addToSet":
                 {
                     "PowerMonthList.0.PowerDateList.$.PowerHourList":
                     {
-                        "PowerHour":the_date,
+                        "PowerHour":int((the_date - _date).seconds/3600),#the_date,
                         "PowerHourData":
                         {
                             "PowerHourWatt" :   meter_data[1],
                             "PowerHourUsage":   meter_data[3],
                             "PowerHourMeter":   meter_data[2],
-                            "PowerHourPFactor": meter_data[4],
-                            "PowerHourAPower" : meter_data[11],
-                            "PowerHourRPower":  meter_data[12],
-                            "PowerHourI_r":     meter_data[5],
-                            "PowerHourI_s":     meter_data[6],
-                            "PowerHourI_t":     meter_data[7],
-                            "PowerHourV_rs":    meter_data[8],
-                            "PowerHourV_st":    meter_data[9],
-                            "PowerHourV_tr":    meter_data[10]
+                            # "PowerHourPFactor": meter_data[4],
+                            # "PowerHourAPower" : meter_data[11],
+                            # "PowerHourRPower":  meter_data[12],
+                            # "PowerHourI_r":     meter_data[5],
+                            # "PowerHourI_s":     meter_data[6],
+                            # "PowerHourI_t":     meter_data[7],
+                            # "PowerHourV_rs":    meter_data[8],
+                            # "PowerHourV_st":    meter_data[9],
+                            # "PowerHourV_tr":    meter_data[10]
                         }
                     }
                 }    
@@ -165,30 +166,33 @@ def insertPowerData(meter_id, meter_name, meter_data, the_date, timeType):
             {
                 "PowerID":meter_id,
                 "PowerName":meter_name,
-                "PowerMonthList.PowerMonth":_month,
-                "PowerMonthList.PowerDateList.PowerDate":_date,
-                "PowerMonthList.PowerDateList.PowerDate.PowerHour":_hour
+                "PowerMonthList": { "$elemMatch": { "PowerMonth": _month} },
+                "PowerMonthList.PowerDateList": { "$elemMatch": { "PowerDate": _date} },
+                "PowerMonthList.PowerDateList.PowerHourList": { "$elemMatch": { "PowerHour": _hour} }
+                #"PowerMonthList.PowerMonth":_month,
+                #"PowerMonthList.PowerDateList.PowerDate":_date,
+                #"PowerMonthList.PowerDateList.PowerHourList.PowerHour":_hour
             },
             {
-                "$push":
+                "$addToSet":
                 {
                     "PowerMonthList.0.PowerDateList.0.PowerHourList.$.PowerTimeList":
                     {
-                        "PowerTime":the_date,
+                        "PowerTime":int((the_date - _date).seconds/60),#the_date,
                         "PowerTimeData":
                         {
                             "PowerTimeWatt" :   meter_data[1],
                             "PowerTimeUsage":   meter_data[3],
                             "PowerTimeMeter":   meter_data[2],
-                            "PowerTimePFactor": meter_data[4],
-                            "PowerTimeAPower" : meter_data[11],
-                            "PowerTimeRPower":  meter_data[12],
-                            "PowerTimeI_r":     meter_data[5],
-                            "PowerTimeI_s":     meter_data[6],
-                            "PowerTimeI_t":     meter_data[7],
-                            "PowerTimeV_rs":    meter_data[8],
-                            "PowerTimeV_st":    meter_data[9],
-                            "PowerTimeV_tr":    meter_data[10]
+                            # "PowerTimePFactor": meter_data[4],
+                            # "PowerTimeAPower" : meter_data[11],
+                            # "PowerTimeRPower":  meter_data[12],
+                            # "PowerTimeI_r":     meter_data[5],
+                            # "PowerTimeI_s":     meter_data[6],
+                            # "PowerTimeI_t":     meter_data[7],
+                            # "PowerTimeV_rs":    meter_data[8],
+                            # "PowerTimeV_st":    meter_data[9],
+                            # "PowerTimeV_tr":    meter_data[10]
                         }
                     }
                 }    
@@ -199,19 +203,36 @@ def insertPowerData(meter_id, meter_name, meter_data, the_date, timeType):
 
 for idx, meter_id in enumerate(meterIDs):
     meter_name = meterNames[idx]
-    createEmptyData(meter_id, meter_name)
-    for one_date in crawUtil.dateRange(START_DATE, END_DATE):
+    last_date = list(PowerList.find(
+        {
+            "PowerID": meter_id,
+        },
+        {
+            "PowerLastDate": 1
+        }
+    ))
+
+    # if 'PowerLastDate' in last_date.keys():
+    if len(last_date) > 0:
+        LAST_DATE = crawUtil.vanillaUTC2TPE(last_date[0]['PowerLastDate'])
+    else:
+        LAST_DATE = START_DATE
+        createEmptyData(meter_id, meter_name, START_DATE)
+
+    for one_date in crawUtil.dateRange(LAST_DATE, END_DATE):
         one_date_str    = dateTime2Str(one_date, 'd')
         next_date_str   = dateTime2Str(one_date+timedelta(1), 'd')
 
-        print('Start processing '+one_date_str)
+        print(dateTime2Str(datetime.now(), 'n') 
+              + ' -> Start processing ' 
+              + meter_id + ' on ' + one_date_str)
 
         # insert if the date == 1st
         if one_date_str[-2:] == '01':
             print('Add new month: '+one_date_str[0:-3]) 
             insertNewMonth(meter_id, meter_name, one_date)
 
-        for dtype in ['d', 'h', 'n']:
+        for dtype in ['d']:#['d', 'h', 'n']:
             powerSoup = crawUtil.fetchHTML(
                 url     = POWER_SITE_URL,
                 meter   = meter_id,
@@ -237,8 +258,21 @@ for idx, meter_id in enumerate(meterIDs):
                     one_datetime,
                     dtype
                 )
+
+        # update PowerLastDate
+        PowerList.update(
+            {
+                "PowerID":  meter_id
+            },
+            {
+                "$set":
+                {
+                    "PowerLastDate":    one_date
+                }
+            }
+        )
             
         # summary if next date == 1st
         if next_date_str[-2:] == '01':
-            summaryMonth(meter_id, meter_name, one_date)
             print('Summary month: '+one_date_str[0:-2]) 
+            summaryMonth(meter_id, meter_name, one_date)
