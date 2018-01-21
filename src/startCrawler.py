@@ -55,7 +55,8 @@ def summaryMonth(meter_id, meter_name, the_date):
         {
             "PowerID":      meter_id,
             "PowerName":    meter_name,
-            "PowerMonthList.PowerMonth": _month
+        }, {
+            "PowerMonthList": { "$elemMatch": { "PowerMonth": _month} }
         }
     ))
     powerDateList = onePowerMonth[0]['PowerMonthList'][0]['PowerDateList']
@@ -73,7 +74,7 @@ def summaryMonth(meter_id, meter_name, the_date):
         {
             "PowerID":      meter_id,
             "PowerName":    meter_name,
-            "PowerMonthList.PowerMonth": _month
+            "PowerMonthList": { "$elemMatch": { "PowerMonth": _month} }
         },
         {
             "$set":
