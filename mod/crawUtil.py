@@ -11,7 +11,7 @@ TAIPEI_TZ       = pytz.timezone('Asia/Taipei')
 def fetchHTML(url, meter, dt1, dt2, dtype='n'):
     payload = {
         'dtype': dtype,
-        'meter': meter,
+        'build': meter,
         'dt1'  : dt1,
         'dt2'  : dt2
     }
